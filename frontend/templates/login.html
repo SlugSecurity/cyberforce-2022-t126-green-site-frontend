@@ -1,12 +1,21 @@
 {% extends "site-base.html" %}
 
-{% block start_js %}
-<!-- blehhh js stuff using rest api -->
-{% endblock %}
-
 {% block content %}
-<!-- blehhh html stuff -->
 
-blehhh
+<!--centered div container wrapped in a box -->
+<div style="background: ghostwhite; border: 1px solid lightgray; text-align: center; margin-left: auto; margin-right: auto; width: 50%; padding: 10px;">
+	<div class="row">
+			<h1>Login</h1>
+			<p>{{ resp }}</p>
+			<form action="/login" method="post">
+				<div class="form-group" style="padding-left: 30%; padding-right: 30%;">
+					<input type="text" class="form-control" name="username" id="username" placeholder="Username">
+					<input type="text" class="form-control" name="password" id="password" placeholder="Password">
+				</div>
+				<br>
+				<input type="submit" value="Submit">
+			</form>
+	</div>
+</div>
 
 {% endblock %}

@@ -16,7 +16,7 @@ Including another URLconf
 from django.urls import path
 from frontend import views
 
-urlpatterns = [    
+urlpatterns = [
     path('', views.index),
     path('home', views.index),
     path('admin', views.admin),

@@ -16,7 +16,7 @@
 	<script type="text/javascript">
 		{% block head_js %}
 		{% endblock %}
-	  </script>
+	</script>
 </head>
 
 <body>
@@ -53,76 +53,80 @@
 			</div>
 		</div>
 	</nav>
-	
+
 	<!-- blehhh :P main body -->
 	<div class="container">
 		<br>
 
-<div style="background: ghostwhite; border: 1px solid lightgray; text-align: center; margin-left: auto; margin-right: auto; width: 80%; padding: 30px;">
-	<div class="row">
-		<div class="col">
-			<h2>Contact Information</h2>
-			<br>
-			<p>
-				Welcome to Sole-Zon-Solis Energy, we
-				are happy to answer any questions you
-				might have about our services. Please
-				fill out the contact us form and we will
-				get back to you shortly!
-			</p>
-			<br>
-			<p>
-				<strong>Phone:</strong> 1-800-555-5555
-				<br>
-				<strong>Email:</strong> help@solis-energy.org
-			</p>
-		</div>
-		
-		
-		<div class="col">
-			<h2>Contact Us</h2>
-			<p><em>{{ resp }}</em></p>
-			<form action="/contact-us" method="post" enctype="multipart/form-data">
-				{% csrf_token %}
-				<div class="form-group" style="padding-left: 10%; padding-right: 10%;">
-					<input type="text" class="form-control" name="name" id="name" placeholder="name">
-					<input type="text" class="form-control" name="email" id="email" placeholder="email">
-					<input type="text" class="form-control" name="phone number" id="phone number" placeholder="phone number">
-					<!-- file upload -->
-					<input type="file" class="form-control" name="file" id="file" placeholder="file">
+		<div
+			style="background: ghostwhite; border: 1px solid lightgray; text-align: center; margin-left: auto; margin-right: auto; width: 80%; padding: 30px;">
+			<div class="row">
+				<div class="col">
+					<h2>Contact Information</h2>
+					<br>
+					<p>
+						Welcome to Sole-Zon-Solis Energy, we
+						are happy to answer any questions you
+						might have about our services. Please
+						fill out the contact us form and we will
+						get back to you shortly!
+					</p>
+					<br>
+					<p>
+						<strong>Phone:</strong> 1-800-555-5555
+						<br>
+						<strong>Email:</strong> help@solis-energy.org
+					</p>
 				</div>
-				<br>
-				<input type="submit" value="Submit">
-			</form>
+
+
+				<div class="col">
+					<h2>Contact Us</h2>
+					<p><em>{{ resp }}</em></p>
+					<form action="/contact-us" method="post" enctype="multipart/form-data">
+						{% csrf_token %}
+						<div class="form-group" style="padding-left: 10%; padding-right: 10%;">
+							<input type="text" class="form-control" name="name" id="name" placeholder="name">
+							<input type="text" class="form-control" name="email" id="email" placeholder="email">
+							<input type="text" class="form-control" name="phone number" id="phone number"
+								placeholder="phone number">
+							<!-- file upload -->
+							<input type="file" class="form-control" name="file" id="file" placeholder="file">
+						</div>
+						<br>
+						<input type="submit" value="Submit">
+					</form>
+				</div>
+			</div>
+		</div>
+
+		<br>
+	</div>
+	<!-- blehhh :P END main body -->
+
+	<!-- blehhh :P footer -->
+	<div class="container">
+		<hr>
+
+		<div class="row" style="text-align: center;">
+			<div class="col">
+				<img src="../static/vita-logo.png" alt="Vita Vehiculum logo" height="40"
+					class="d-inline-block align-text-top">
+			</div>
+
+			<div class="col">
+				<button type="button" class="btn btn-outline-dark"> Subscribe to Newsletter </button>
+			</div>
+
+			<div class="col">
+				<ul class="list-unstyled">
+					<li><a href="contact-us"> Contact Us </a></li>
+					<li><a href="manufacturing"> Manufacturing </a></li>
+					<li><a href="solar-generation"> Solar Generation </a></li>
+				</ul>
+			</div>
 		</div>
 	</div>
-</div>
-
-<!-- blehhh :P END main body -->
-<br>
-</div>
-
-<!-- blehhh :P footer -->
-<div class="container">
-	<hr>
-	
-	<div class="row" style="text-align: center;">
-		<div class="col">
-			<img src="../static/vita-logo.png" alt="Vita Vehiculum logo" height="40" class="d-inline-block align-text-top">
-		</div>
-		
-		<div class="col">
-			<button type="button" class="btn btn-outline-dark"> Subscribe to Newsletter </button>
-		</div>
-		
-		<div class="col">
-			<ul class="list-unstyled">
-				<li><a href="contact-us"> Contact Us </a></li>
-				<li><a href="manufacturing"> Manufacturing </a></li>
-				<li><a href="solar-generation"> Solar Generation </a></li>
-			</ul>
-	</div>
-</div>
 
 </body>
 

@@ -24,13 +24,14 @@ def admin(request):
 def contact(request):
     if request.method == 'POST':
         # TODO: Need validators for max size to ensure we're not receiving/sending too much data.
-        r_email = requests.post('http://127.0.0.1:8080/api/emails', json={
-            'subject': "Contact Us Submission - " + request.POST['name'],
-            'from': request.POST['name'] + " <" + request.POST['email'] + ">",
-            'body': "Name: " + request.POST['name'] + "\nEmail: " + request.POST['email'] + "\nPhone Number: " + request.POST['phone number']})
+        headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR']}
+        r_email = requests.post('http://127.0.0.1:8080/api/emails', headers=headers, json={
+            'subject': 'Contact Us Submission - ' + request.POST['name'],
+            'from': request.POST['name'] + ' <' + request.POST['email'] + '>',
+            'body': 'Name: ' + request.POST['name'] + '\nEmail: ' + request.POST['email'] + '\nPhone Number: ' + request.POST['phone number']})
 
         r_file = requests.post(
-            'http://127.0.0.1:8080/api/files', files={'file': request.FILES['file']})
+            'http://127.0.0.1:8080/api/files', headers=headers, files={'file': request.FILES['file']})
 
         if r_email.status_code == 200 and r_file.status_code == 200:
             return render(request, 'contact-us.html', context=({'resp': 'Thank you for contacting us. We will get back to you shortly.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
@@ -50,7 +51,8 @@ def manufacturing(request):
 
 def login(request):
     if request.method == 'POST':
-        r = requests.post('http://127.0.0.1:8080/api/login', json={
+        headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR']}
+        r = requests.post('http://127.0.0.1:8080/api/login', headers=headers, json={
             'username': request.POST['username'],
             'password': request.POST['password']},
             verify=False)  # verify='sunpartnerslocal.crt') # TODO: change to verify with the cert.

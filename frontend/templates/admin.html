@@ -1,1 +1,133 @@
-test
+<!doctype html>
+<html lang="en">
+
+<head>
+	<meta charset="utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1">
+
+	<link href="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/css/bootstrap.min.css" rel="stylesheet"
+		integrity="sha384-1BmE4kWBq78iYhFldvKuhfTAU6auU8tT94WrHftjDbrCEXSU1oBoqyl2QvZ6jIW3" crossorigin="anonymous">
+
+	<script src="https://cdn.jsdelivr.net/npm/bootstrap@5.1.3/dist/js/bootstrap.bundle.min.js"
+		integrity="sha384-ka7Sk0Gln4gmtz2MlQnikT1wXgYsOg+OMhuP+IlRH9sENBO0LRn5q+8nbTov4+1p"
+		crossorigin="anonymous"></script>
+
+	<title>Sole-Zon-Solis Energy Solutions</title>
+
+</head>
+
+<body>
+	<!-- blehhh :P navbar -->
+	<nav class="navbar navbar-expand-lg navbar-dark bg-dark">
+		<div class="container-fluid">
+			<button class="navbar-toggler" type="button" data-bs-toggle="collapse"
+				data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false"
+				aria-label="Toggle navigation">
+				<span class="navbar-toggler-icon"></span>
+			</button>
+
+			<div class="collapse navbar-collapse" id="navbarSupportedContent">
+				<ul class="navbar-nav me-auto mb-2 mb-lg-0" , style="margin-left: auto; margin-right: auto;">
+					<li class="nav-item">
+						<a class="navbar-brand" href="home">
+							<img src="../static/solis-logo.png" alt="Sole-Zon-Solis logo" height="56"
+								class="d-inline-block align-text-top">
+						</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="contact-us">Contact Us</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="manufacturing">Manufacturing</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href="solar-generation">Solar Generation</a>
+					</li>
+					<li class="nav-item">
+						<a class="nav-link" href={{ userStateHref }}>{{ userStateText }}</a>
+					</li>
+				</ul>
+			</div>
+		</div>
+	</nav>
+
+	<!-- blehhh :P main body -->
+	<div class="container">
+		<br>
+
+		<div style="background: ghostwhite; border: 1px solid lightgray; text-align: center; margin-left: auto; margin-right: auto; width: 50%; padding: 10px;">
+			<h3> FTP Server View </h3>
+			<div style="overflow-y: scroll; height: auto; width: 100%;">
+				<table class="table table-striped table-hover">
+					<thead>
+						<tr>
+							<th scope="col">File Name</th>
+							<th scope="col">Download</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for file in files %}
+						<tr>
+							<td>{{ file }}</td>
+							<td><a href="/download/{{ file }}">Download</a></td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<br>
+		
+		<div style="background: ghostwhite; border: 1px solid lightgray; text-align: center; margin-left: auto; margin-right: auto; width: 50%; padding: 10px;">
+			<h3> Emails </h3>
+			<div style="overflow-y: scroll; height: auto; width: 100%;">
+				<table class="table table-striped table-hover">
+					<thead>
+						<tr>
+							<th scope="col">Name</th>
+							<th scope="col">Email</th>
+							<th scope="col">Message</th>
+						</tr>
+					</thead>
+					<tbody>
+						{% for email in emails %}
+						<tr>
+							<td>{{ email.name }}</td>
+							<td>{{ email.email }}</td>
+							<td>{{ email.message }}</td>
+						</tr>
+						{% endfor %}
+					</tbody>
+				</table>
+			</div>
+		</div>
+		<br>
+	</div>
+	<!-- blehhh :P END main body -->
+
+	<!-- blehhh :P footer -->
+	<div class="container">
+		<hr>
+
+		<div class="row" style="text-align: center;">
+			<div class="col">
+				<img src="../static/vita-logo.png" alt="Vita Vehiculum logo" height="40"
+					class="d-inline-block align-text-top">
+			</div>
+
+			<div class="col">
+				<button type="button" class="btn btn-outline-dark"> Subscribe to Newsletter </button>
+			</div>
+
+			<div class="col">
+				<ul class="list-unstyled">
+					<li><a href="contact-us"> Contact Us </a></li>
+					<li><a href="manufacturing"> Manufacturing </a></li>
+					<li><a href="solar-generation"> Solar Generation </a></li>
+				</ul>
+			</div>
+		</div>
+	</div>
+</body>
+
+</html>

@@ -1,0 +1,38 @@
+{% extends "site-base.html" %}
+
+{% block start_js %}
+<!-- blehhh js stuff using rest api -->
+{% endblock %}
+
+{% block content %}
+<br> <div style="text-align:center">
+	<img src="../static/solar-panels.png" alt="solar panels" width="500" height="333">
+</div> <br>
+
+<div style="background: ghostwhite; font-size: 20px; padding: 10px; border: 1px solid lightgray; margin: 10px; text-align: center">
+	<p>Sonnenberg Fields Live Data:</p>
+	
+	<div style="display: flex; flex-direction: row; justify-content: space-between">
+		<div style="flex: 1">
+			List of Solar Arrays:
+			<div style="display: flex; flex-direction: column">
+				<div style="flex: 1">Array 1</div>
+				<div style="flex: 1">Array 2</div>
+				<div style="flex: 1">Array 3</div>
+				<div style="flex: 1">Array 4</div>
+				<div style="flex: 1">Array 5</div>
+			</div>
+		</div>
+		
+		<div style="flex: 1">
+			Power Generation:
+			<div style="display: flex; flex-direction: column">
+				<div style="flex: 1">Array 6</div>
+				<div style="flex: 1">Array 7</div>
+				<div style="flex: 1">Array 7</div>
+			</div>
+		</div>
+	</div>
+</div>
+
+{% endblock %}

@@ -33,7 +33,7 @@
 				<ul class="navbar-nav me-auto mb-2 mb-lg-0" , style="margin-left: auto; margin-right: auto;">
 					<li class="nav-item">
 						<a class="navbar-brand" href="home">
-							<img src="../static/solis-logo.png" alt="" height="56"
+							<img src="../static/solis-logo.png" alt="Sole-Zon-Solis logo" height="56"
 								class="d-inline-block align-text-top">
 						</a>
 					</li>
@@ -56,37 +56,32 @@
 	
 	<!-- blehhh :P main body -->
 	<div class="container">
-		{% block content %}
-		{% endblock %}
+		<br>
+			{% block content %}
+			{% endblock %}
+		<br>
 	</div>
 
 	<!-- blehhh :P footer -->
 	<div class="container">
-		<div class="row">
-			<div class="col">
-				<hr>
-			</div>
-			<div class="col-auto">
-				<img src="../static/vita-logo.png" alt="" height="40" class="d-inline-block align-text-top">
-			</div>
-			<div class="col">
-				<hr>
-			</div>
-		</div>
-
+		<hr>
+		
 		<div class="row" style="text-align: center;">
+			<div class="col">
+				<img src="../static/vita-logo.png" alt="Vita Vehiculum logo" height="40" class="d-inline-block align-text-top">
+			</div>
+			
 			<div class="col">
 				<button type="button" class="btn btn-outline-dark"> Subscribe to Newsletter </button>
 			</div>
 			
-			<!-- links to other pages in a single column -->
 			<div class="col">
 				<ul class="list-unstyled">
 					<li><a href="contact-us"> Contact Us </a></li>
 					<li><a href="manufacturing"> Manufacturing </a></li>
 					<li><a href="solar-generation"> Solar Generation </a></li>
 				</ul>
-			</div>
+		</div>
 	</div>
 
 </body>

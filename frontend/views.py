@@ -4,6 +4,9 @@ def getStatusText(request):
 	return "Login"
 
 def index(request):
+	solar_arrays = []
+	power_generation = []
+
 	return render(request, 'home.html', context={ 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request) })
 
 def admin(request):
@@ -11,9 +14,14 @@ def admin(request):
 
 def contact(request):
 	if request.method == 'POST':
-		return render(request, 'contact-us.html', context=( {'resp': 'Thank you for contacting us. We will get back to you shortly.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)} ))
+		print(request.POST['name'])
+		print(request.POST['email'])
+		print(request.POST['phone number'])
+		print(request.FILES['file'].read()) # bytes of files do what u want with it, prob should also do like checks if these actually exist etc
 		# do all ur checks here and stuff
-	
+
+		return render(request, 'contact-us.html', context=( {'resp': 'Thank you for contacting us. We will get back to you shortly.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)} ))
+
 	return render(request, 'contact-us.html', context=({'resp': '', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)} ))
 
 def solar(request):

@@ -74,7 +74,7 @@
 			<p>
 				<strong>Phone:</strong> 1-800-555-5555
 				<br>
-				<strong>Email:</strong> help@solis-energy.com
+				<strong>Email:</strong> help@solis-energy.org
 			</p>
 		</div>
 		
@@ -82,7 +82,7 @@
 		<div class="col">
 			<h2>Contact Us</h2>
 			<p><em>{{ resp }}</em></p>
-			<form action="/contact-us" method="post">
+			<form action="/contact-us" method="post" enctype="multipart/form-data">
 				{% csrf_token %}
 				<div class="form-group" style="padding-left: 10%; padding-right: 10%;">
 					<input type="text" class="form-control" name="name" id="name" placeholder="name">

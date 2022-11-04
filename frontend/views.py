@@ -54,8 +54,7 @@ def login(request):
         headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR']}
         r = requests.post('http://127.0.0.1:8080/api/login', headers=headers, json={
             'username': request.POST['username'],
-            'password': request.POST['password']},
-            verify=False)  # verify='sunpartnerslocal.crt') # TODO: change to verify with the cert.
+            'password': request.POST['password']})
 
         if r.status_code == 200:
             response = redirect('/')

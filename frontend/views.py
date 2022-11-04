@@ -23,10 +23,6 @@ def admin(request):
 
 def contact(request):
     if request.method == 'POST':
-        print(request.POST['name'])
-        print(request.POST['email'])
-        print(request.POST['phone number'])
-        print(request.FILES['file'].read())
         # TODO: Need validators for max size to ensure we're not receiving/sending too much data.
         r_email = requests.post('http://127.0.0.1:8080/api/emails', json={
             'subject': "Contact Us Submission - " + request.POST['name'],

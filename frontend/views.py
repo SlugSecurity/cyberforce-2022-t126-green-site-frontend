@@ -51,6 +51,7 @@ def manufacturing(request):
 
 def login(request):
     if request.method == 'POST':
+        # TODO: Need validators for max size to ensure we're not receiving/sending too much data.
         headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR']}
         r = requests.post('http://127.0.0.1:8080/api/login', headers=headers, json={
             'username': request.POST['username'],

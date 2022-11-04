@@ -1,4 +1,5 @@
 from django.shortcuts import render
+from flask import request
 
 def index(request):
 	return render(request, 'home.html')
@@ -16,4 +17,7 @@ def manufacturing(request):
 	return render(request, 'manufacturing.html')
 
 def login(request):
-	return render(request, 'login.html')
+	if request.method == 'POST':
+		return render(request, 'login.html', context={'resp': 'EATED??'})
+	
+	return render(request, 'login.html', context={'resp': 'bruh'})

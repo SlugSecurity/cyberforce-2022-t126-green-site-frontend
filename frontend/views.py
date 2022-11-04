@@ -26,11 +26,20 @@ def contact(request):
         print(request.POST['name'])
         print(request.POST['email'])
         print(request.POST['phone number'])
-        # bytes of files do what u want with it, prob should also do like checks if these actually exist etc
         print(request.FILES['file'].read())
-        # do all ur checks here and stuff
+        # TODO: Need validators for max size to ensure we're not receiving/sending too much data.
+        r_email = requests.post('http://127.0.0.1:8080/api/emails', json={
+            'subject': "Contact Us Submission - " + request.POST['name'],
+            'from': request.POST['name'] + " <" + request.POST['email'] + ">",
+            'body': "Name: " + request.POST['name'] + "\nEmail: " + request.POST['email'] + "\nPhone Number: " + request.POST['phone number']})
 
-        return render(request, 'contact-us.html', context=({'resp': 'Thank you for contacting us. We will get back to you shortly.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
+        r_file = requests.post(
+            'http://127.0.0.1:8080/api/files', files={'file': request.FILES['file']})
+
+        if r_email.status_code == 200 and r_file.status_code == 200:
+            return render(request, 'contact-us.html', context=({'resp': 'Thank you for contacting us. We will get back to you shortly.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
+
+        return render(request, 'contact-us.html', context=({'resp': 'Form validation error, form contents or file name too long.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 
     return render(request, 'contact-us.html', context=({'resp': '', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 
@@ -45,8 +54,10 @@ def manufacturing(request):
 
 def login(request):
     if request.method == 'POST':
-        r = requests.post('https://10.0.126.79:8443/api/login', json={
-            'username': request.POST['username'], 'password': request.POST['password']}, verify=False)  # verify='sunpartnerslocal.crt') # TODO: change to verify with the cert.
+        r = requests.post('http://127.0.0.1:8080/api/login', json={
+            'username': request.POST['username'],
+            'password': request.POST['password']},
+            verify=False)  # verify='sunpartnerslocal.crt') # TODO: change to verify with the cert.
 
         if r.status_code == 200:
             response = redirect('/')

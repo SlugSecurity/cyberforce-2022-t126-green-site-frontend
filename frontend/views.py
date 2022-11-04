@@ -1,8 +1,13 @@
-from django.shortcuts import render
+from django.shortcuts import render, redirect
+
+import requests
 
 
 def getStatusText(request):
-    return "Login"
+    if request.COOKIES.get('token') == None:
+        return 'Login'
+    else:
+        return 'Admin'
 
 
 def index(request):
@@ -40,7 +45,18 @@ def manufacturing(request):
 
 def login(request):
     if request.method == 'POST':
+        r = requests.post('https://10.0.126.79:8443/api/login', json={
+            'username': request.POST['username'], 'password': request.POST['password']}, verify=False)  # verify='sunpartnerslocal.crt') # TODO: change to verify with the cert.
+
+        if r.status_code == 200:
+            response = redirect('/')
+            token = r.json().get('token')
+
+            if token is not None:
+                response.set_cookie('token', token)
+
+            return response
+
         return render(request, 'login.html', context=({'resp': 'Login Failed. Please try again.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
-        # do all ur checks here and stuff
 
     return render(request, 'login.html', context=({'resp': '', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))

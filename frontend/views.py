@@ -2,12 +2,15 @@ from django import forms
 from django.shortcuts import render, redirect
 from django.http import StreamingHttpResponse
 from ratelimit.decorators import ratelimit
+from sanitize_filename import sanitize
 from queue import Queue
 
+import binascii
 import ftplib
 import re
 import requests
 import threading
+import os
 
 token = "3910caf078b1f37d4a611d0b1f25d92bc729d61fb97e4935960b2c50216e7c2e"
 
@@ -23,6 +26,31 @@ class FTP_TLS_FIXED(ftplib.FTP_TLS):
                                             session=self.sock.session)
 
         return conn, size
+
+    def storbinary(self, cmd, fp):
+        self.voidcmd('TYPE I')
+
+        with self.transfercmd(cmd, None) as conn:
+            while True:
+                buf = fp.read(4096)
+
+                if not buf:
+                    break
+
+                conn.sendall(buf)
+
+        # FTP library can't close the SSL connection properly, so the connection is forcefully terminated, so we need to change the return code.
+        return "226 Operation successful"
+
+
+def open_ftps_connection():
+    ftps = FTP_TLS_FIXED()
+    ftps.connect('10.0.126.73')
+    ftps.login()
+    ftps.prot_p()
+    ftps.set_pasv(True)
+
+    return ftps
 
 
 def ftp_chunk_iterator(FTP, command):
@@ -96,11 +124,7 @@ def admin(request):
                'Authorization': 'Bearer ' + request.COOKIES.get('token')}
 
     try:
-        ftps = FTP_TLS_FIXED()
-        ftps.connect('10.0.126.73')
-        ftps.login()
-        ftps.prot_p()
-        ftps.set_pasv(True)
+        ftps = open_ftps_connection()
         file_names = ftps.nlst()
         files = []
 
@@ -179,6 +203,8 @@ def contact(request):
             if contact_file.size > 10485760:
                 return render(request, 'contact-us.html', context={'form': form, 'resp': 'File is larger than 10MB', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
 
+            filename = sanitize(contact_file.name)
+
             try:
                 headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR']}
                 r_email = requests.post('http://127.0.0.1:8080/api/emails', headers=headers, json={
@@ -187,16 +213,18 @@ def contact(request):
                     'from_email': contact_email,
                     'body': 'Name: ' + contact_name + '\nEmail: ' + contact_email + '\nPhone Number: ' + contact_phone})
 
-                r_file = requests.post(
-                    'http://127.0.0.1:8080/api/files', headers=headers, files={'file': contact_file})
+                ftps = open_ftps_connection()
+                ftps.storbinary('STOR ' + binascii.hexlify(os.urandom(16)
+                                                           ).decode() + filename, contact_file.file)
+                ftps.close()
 
-                if r_email.status_code == 200 and r_file.status_code == 200:
+                if r_email.status_code == 200:
                     return render(request, 'contact-us.html', context=({'hide_submit': True, 'resp': 'Thank you for contacting us. We will get back to you shortly.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 
                 return render(request, 'contact-us.html', context=({'hide_submit': True, 'resp': 'An internal server error occured. Please try again.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
             except:
                 return render(request, 'contact-us.html', context=({'hide_submit': True, 'resp': 'Failed to connect to the server. Please try again.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
-        except Exception as e:
+        except:
             return render(request, 'contact-us.html', context=({'hide_submit': True, 'resp': 'An error occurred. Please try again.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 
     return render(request, 'contact-us.html', context=({'form': form, 'resp': '', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))

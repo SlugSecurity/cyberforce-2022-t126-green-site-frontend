@@ -1,6 +1,6 @@
 from django.shortcuts import render, redirect
 from django import forms
-import requests
+import requests, re
 
 class ContactForm(forms.Form):
     name = forms.CharField(label='Name', max_length=100, required=True, widget=forms.TextInput(attrs={'placeholder': 'Name'}))
@@ -43,11 +43,19 @@ def contact(request):
     form = ContactForm()
     if request.method == 'POST':
         try:
-            contact_name = request.POST['name']
-            contact_email = request.POST['email']
-            contact_phone = request.POST['phone_number']
-            contact_file = request.FILES['file']
+            contact_name = str(request.POST['name'])
+            contact_email = str(request.POST['email'])
+            contact_phone = str(request.POST['phone_number'])
+            contact_file = str(request.FILES['file'])
             
+            if 0 > len(contact_name) > 100:
+                return render(request, 'contact-us.html', context={'form': form, 'resp': 'Name must be between 1 and 100 characters.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
+            if 0 > len(contact_email) > 100:
+                return render(request, 'contact-us.html', context={'form': form, 'resp': 'Email must be between 1 and 100 characters.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
+            if not re.match('([A-Za-z0-9]+[.-_])*[A-Za-z0-9]+@[A-Za-z0-9-]+(\.[A-Z|a-z]{2,})+', contact_email):
+                return render(request, 'contact-us.html', context={'form': form, 'resp': 'Email is not valid.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
+            if 0 > len(contact_phone) > 20:
+                return render(request, 'contact-us.html', context={'form': form, 'resp': 'Phone Number must be between 1 and 20 characters.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})            
             if contact_file.size > 10485760:
                 return render(request, 'contact-us.html', context=({'resp': 'File is larger than 10mb', 'form': form, 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
             

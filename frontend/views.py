@@ -24,7 +24,7 @@ def getStatusText(request):
         return 'Admin'
 
 
-@ratelimit(key='ip', rate='3/s')
+@ratelimit(key='ip', rate='3/s', block=True)
 def index(request):
     solar_arrays = None
     headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR']}
@@ -46,7 +46,7 @@ def index(request):
     })
 
 
-@ratelimit(key='ip', rate='3/s')
+@ratelimit(key='ip', rate='3/s', block=True)
 def admin(request):
     # No token. Redirect to login page.
     if 'token' not in request.COOKIES:
@@ -99,7 +99,7 @@ def admin(request):
     })
 
 
-@ratelimit(key='ip', rate='3/s')
+@ratelimit(key='ip', rate='3/s', block=True)
 def contact(request):
     form = ContactForm()
 
@@ -149,17 +149,17 @@ def contact(request):
     return render(request, 'contact-us.html', context=({'form': form, 'resp': '', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 
 
-@ratelimit(key='ip', rate='3/s')
+@ratelimit(key='ip', rate='3/s', block=True)
 def solar(request):
     return render(request, 'solar-generation.html', context={'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
 
 
-@ratelimit(key='ip', rate='3/s')
+@ratelimit(key='ip', rate='3/s', block=True)
 def manufacturing(request):
     return render(request, 'manufacturing.html', context={'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
 
 
-@ratelimit(key='ip', rate='3/s')
+@ratelimit(key='ip', rate='3/s', block=True)
 def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')

@@ -11,10 +11,16 @@ def getStatusText(request):
 
 
 def index(request):
+    r = requests.get('http://127.0.0.1:8080/api/solar')
     solar_arrays = []
-    power_generation = []
 
-    return render(request, 'home.html', context={'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
+    if r.status_code == 200:
+        solar_arrays = r.json()
+
+    return render(request, 'home.html', context={
+        'userStateHref': getStatusText(request).lower(),
+        'userStateText': getStatusText(request),
+        'solarArrays': solar_arrays})
 
 
 def admin(request):
@@ -36,7 +42,7 @@ def contact(request):
         if r_email.status_code == 200 and r_file.status_code == 200:
             return render(request, 'contact-us.html', context=({'resp': 'Thank you for contacting us. We will get back to you shortly.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 
-        return render(request, 'contact-us.html', context=({'resp': 'Form validation error, form contents or file name too long.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
+        return render(request, 'contact-us.html', context=({'resp': 'Form submission error, check form contents and file name length.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 
     return render(request, 'contact-us.html', context=({'resp': '', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 

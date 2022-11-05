@@ -123,7 +123,7 @@ def contact(request):
                 return render(request, 'contact-us.html', context={'form': form, 'resp': 'Email is not valid.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
 
             if 0 > len(contact_phone) > 20:
-                return render(request, 'contact-us.html', context={'form': form, 'resp': 'Phone Number must be between 1 and 20 characters.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
+                return render(request, 'contact-us.html', context={'form': form, 'resp': 'Phone number must be between 1 and 20 characters.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
 
             if contact_file.size > 10485760:
                 return render(request, 'contact-us.html', context={'form': form, 'resp': 'File is larger than 10MB', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
@@ -132,7 +132,8 @@ def contact(request):
                 headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR']}
                 r_email = requests.post('http://127.0.0.1:8080/api/emails', headers=headers, json={
                     'subject': 'Contact Us Submission - ' + contact_name,
-                    'from': contact_name + ' <' + contact_email + '>',
+                    'from_name': contact_name,
+                    'from_email': contact_email,
                     'body': 'Name: ' + contact_name + '\nEmail: ' + contact_email + '\nPhone Number: ' + contact_phone})
 
                 r_file = requests.post(
@@ -140,6 +141,8 @@ def contact(request):
 
                 if r_email.status_code == 200 and r_file.status_code == 200:
                     return render(request, 'contact-us.html', context=({'hide_submit': True, 'resp': 'Thank you for contacting us. We will get back to you shortly.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
+
+                return render(request, 'contact-us.html', context=({'hide_submit': True, 'resp': 'An internal server error occured. Please try again.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
             except:
                 return render(request, 'contact-us.html', context=({'hide_submit': True, 'resp': 'Failed to connect to the server. Please try again.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
         except Exception as e:

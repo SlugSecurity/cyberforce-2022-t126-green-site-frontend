@@ -17,7 +17,13 @@ def getStatusText(request):
 
 def index(request):
     headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR']}
-    r = requests.get('http://127.0.0.1:8080/api/solar', headers=headers)
+    try:
+        r = requests.get('http://127.0.0.1:8080/api/solar', headers=headers)
+    except:
+        return render(request, 'home.html', context={
+        'userStateHref': getStatusText(request).lower(),
+        'userStateText': getStatusText(request)})
+
     solar_arrays = []
 
     if r.status_code == 200:

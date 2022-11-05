@@ -1,6 +1,7 @@
 from django import forms
 from django.shortcuts import render, redirect
 from django.http import StreamingHttpResponse
+from ratelimit.decorators import ratelimit
 
 import requests
 import re
@@ -23,6 +24,7 @@ def getStatusText(request):
         return 'Admin'
 
 
+@ratelimit(key='ip', rate='3/s')
 def index(request):
     solar_arrays = None
     headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR']}
@@ -44,6 +46,7 @@ def index(request):
     })
 
 
+@ratelimit(key='ip', rate='3/s')
 def admin(request):
     # No token. Redirect to login page.
     if 'token' not in request.COOKIES:
@@ -86,8 +89,7 @@ def admin(request):
         return render(request, 'admin.html', context={'userStateHref': getStatusText(request).lower, 'userStateText': getStatusText(request)})
 
     if r.status_code == 200:
-        # emails = r.json() # TODO: Substitute this when the API is implemented.
-        emails = []
+        emails = r.json()
 
     return render(request, 'admin.html', context={
         'userStateHref': getStatusText(request).lower,
@@ -97,6 +99,7 @@ def admin(request):
     })
 
 
+@ratelimit(key='ip', rate='3/s')
 def contact(request):
     form = ContactForm()
 
@@ -146,14 +149,17 @@ def contact(request):
     return render(request, 'contact-us.html', context=({'form': form, 'resp': '', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 
 
+@ratelimit(key='ip', rate='3/s')
 def solar(request):
     return render(request, 'solar-generation.html', context={'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
 
 
+@ratelimit(key='ip', rate='3/s')
 def manufacturing(request):
     return render(request, 'manufacturing.html', context={'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
 
 
+@ratelimit(key='ip', rate='3/s')
 def login(request):
     if request.method == 'POST':
         username = request.POST.get('username')

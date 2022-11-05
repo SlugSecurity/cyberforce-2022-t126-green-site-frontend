@@ -66,12 +66,23 @@
 						</tr>
 					</thead>
 					<tbody>
+						{% if files %}
 						{% for file in files %}
 						<tr>
-							<td>{{ file }}</td>
-							<td><a href="/download/{{ file }}">Download</a></td>
+							<td>{{ file.name }}</td>
+							<td>
+								<form action="/admin" method="post" enctype="multipart/form-data">
+									<input type="hidden" name="file" value="{{ file.id }}">
+									<input type="submit" value="Download">
+								</form>
+							</td>
 						</tr>
 						{% endfor %}
+						{% else %}
+						<tr>
+							<td colspan="2">Server backend is down or errored.</td>
+						</tr>
+						{% endif %}
 					</tbody>
 				</table>
 			</div>
@@ -92,6 +103,7 @@
 						</tr>
 					</thead>
 					<tbody>
+						{% if emails %}
 						{% for email in emails %}
 						<tr>
 							<td>{{ email.subject }}</td>
@@ -99,6 +111,11 @@
 							<td>{{ email.body }}</td>
 						</tr>
 						{% endfor %}
+						{% else %}
+						<tr>
+							<td colspan="3">Server backend is down or errored.</td>
+						</tr>
+						{% endif %}
 					</tbody>
 				</table>
 			</div>

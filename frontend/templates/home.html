@@ -69,23 +69,23 @@
 					<b><u>List of Solar Arrays:</u></b>
 					<div style="display: flex; flex-direction: column">
 						{% if solarArrays %}
-							{% for solar in solarArrays %}
-							<div style="flex: 1"><b>Array {{ solar.array_id }}:</b></div>
-							Status: {{ solar.solar_status }}
-							<br>
-							Voltage: {{ solar.array_voltage }} V
-							<br>
-							Current: {{ solar.array_current }} A
-							<br>
-							Temperature: {{ solar.array_temp }}&#8457;
-							<br>
-							Tracker Tilt: {{ solar.tracker_tilt }}&#176;
-							<br>
-							Tracker Azimuth: {{ solar.tracker_azimuth }}&#176;
-							<br>
-							{% endfor %}
+						{% for solar in solarArrays %}
+						<div style="flex: 1"><b>Array {{ solar.array_id }}:</b></div>
+						Status: {{ solar.solar_status }}
+						<br>
+						Voltage: {{ solar.array_voltage }} V
+						<br>
+						Current: {{ solar.array_current }} A
+						<br>
+						Temperature: {{ solar.array_temp }}&#8457;
+						<br>
+						Tracker Tilt: {{ solar.tracker_tilt }}&#176;
+						<br>
+						Tracker Azimuth: {{ solar.tracker_azimuth }}&#176;
+						<br>
+						{% endfor %}
 						{% else %}
-							<div style="flex: 1">No Solar Arrays Connected</div>
+						<div style="flex: 1">Server backend is down or errored.</div>
 						{% endif %}
 					</div>
 				</div>
@@ -93,11 +93,15 @@
 				<div style="flex: 1">
 					<b><u>Power Generation:</u></b>
 					<div style="display: flex; flex-direction: column">
+						{% if solarArrays %}
 						{% for solar in solarArrays %}
 						<div style="flex: 1"><b>Array {{ solar.array_id }}:</b></div>
 						Power: {{ solar.array_voltage|multiply:solar.array_current }} W
 						<br>
 						{% endfor %}
+						{% else %}
+						<div style="flex: 1">Server backend is down or errored.</div>
+						{% endif %}
 					</div>
 				</div>
 			</div>

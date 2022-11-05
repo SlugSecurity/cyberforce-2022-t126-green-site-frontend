@@ -3,8 +3,42 @@ from django.shortcuts import render, redirect
 from django.http import StreamingHttpResponse
 from ratelimit.decorators import ratelimit
 
-import requests
+import ftplib
 import re
+import requests
+import threading
+from queue import Queue
+
+
+class FTP_TLS_FIXED(ftplib.FTP_TLS):
+    """Explicit FTPS, with shared TLS session"""
+
+    def ntransfercmd(self, cmd, rest=None):
+        conn, size = ftplib.FTP.ntransfercmd(self, cmd, rest)
+        if self._prot_p:
+            conn = self.context.wrap_socket(conn,
+                                            server_hostname=self.host,
+                                            session=self.sock.session)
+
+        return conn, size
+
+
+def ftp_chunk_iterator(FTP, command):
+    queue = Queue.Queue(maxsize=4096)
+
+    def ftp_thread_target():
+        FTP.retrbinary(command, callback=queue.put)
+        queue.put(None)
+
+    ftp_thread = threading.Thread(target=ftp_thread_target)
+    ftp_thread.start()
+
+    while True:
+        chunk = queue.get()
+        if chunk is not None:
+            yield chunk
+        else:
+            return
 
 
 class ContactForm(forms.Form):
@@ -58,12 +92,26 @@ def admin(request):
                'Authorization': 'Bearer ' + request.COOKIES.get('token')}
 
     try:
-        r = requests.get('http://127.0.0.1:8080/api/files', headers=headers)
-    except:
-        return render(request, 'admin.html', context={'userStateHref': getStatusText(request).lower, 'userStateText': getStatusText(request)})
+        ftps = FTP_TLS_FIXED()
+        ftps.connect('10.0.126.73')
+        ftps.login()
+        ftps.prot_p()
+        ftps.set_pasv(True)
+        file_names = ftps.nlst()
+        files = []
 
-    if r.status_code == 200:
-        files = r.json()
+        for file_name in file_names:
+            try:
+                # Take the 128-bit file ID away from the file name.
+                file_name = file_name[32:]
+                file_id = str(int(file_name[:32], 16))
+            except:
+                continue
+
+            files.append({'name': file_name, 'id': file_id})
+    except:
+        ftps.close()
+        return render(request, 'admin.html', context={'userStateHref': getStatusText(request).lower, 'userStateText': getStatusText(request)})
 
     if request.method == 'POST':
         file_id = request.POST.get('file')
@@ -71,17 +119,17 @@ def admin(request):
         if file_id is not None:
             for file in files:
                 if file['id'] == file_id:
+                    ftp_chunk_iterator(
+                        ftps, 'RETR ' + file['id'] + file['name'])
                     try:
-                        r = requests.get(
-                            'http://127.0.0.1:8080/api/files/' + file_id, headers=headers, stream=True)
-
-                        if r.status_code == 200:
-                            return StreamingHttpResponse(streaming_content=r.content, headers={
-                                'Content-Disposition': 'attachment; filename="' + file['name'] + '"'})
+                        return StreamingHttpResponse(streaming_content=r.content, headers={
+                            'Content-Disposition': 'attachment; filename="' + file['name'] + '"'})
                     except:
                         pass
 
                     break
+
+    ftps.close()
 
     try:
         r = requests.get('http://127.0.0.1:8080/api/emails', headers=headers)

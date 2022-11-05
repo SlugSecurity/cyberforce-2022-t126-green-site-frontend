@@ -36,7 +36,7 @@ def index(request):
 
 
 def admin(request):
-    return render(request, 'admin.html', context={'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)})
+    return render(request, 'admin.html', context={'userStateHref': getStatusText(request).lower, 'userStateText': getStatusText(request)})
 
 
 def contact(request):
@@ -83,10 +83,13 @@ def manufacturing(request):
 def login(request):
     if request.method == 'POST':
         # TODO: Need validators for max size to ensure we're not receiving/sending too much data.
-        headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR']}
-        r = requests.post('http://127.0.0.1:8080/api/login', headers=headers, json={
-            'username': request.POST['username'],
-            'password': request.POST['password']})
+        try:
+            headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR']}
+            r = requests.post('http://127.0.0.1:8080/api/login', headers=headers, json={
+                'username': request.POST['username'],
+                'password': request.POST['password']})
+        except:
+            return render(request, 'login.html', context=({'resp': 'Failed to connect to the server. Please try again.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 
         if r.status_code == 200:
             response = redirect('/')

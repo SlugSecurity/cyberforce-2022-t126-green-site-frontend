@@ -81,14 +81,11 @@
 					<p><em>{{ resp }}</em></p>
 					<form action="/contact-us" method="post" enctype="multipart/form-data">
 						{% csrf_token %}
-						<div class="form-group" style="padding-left: 10%; padding-right: 10%;">
-							<input type="text" class="form-control" name="name" id="name" placeholder="name">
-							<input type="text" class="form-control" name="email" id="email" placeholder="email">
-							<input type="text" class="form-control" name="phone number" id="phone number"
-								placeholder="phone number">
-							<!-- file upload -->
-							<input type="file" class="form-control" name="file" id="file" placeholder="file">
+						{% for field in form %}
+						<div class="form-group">
+							{{ field }}
 						</div>
+						{% endfor %}
 						<br>
 						<input type="submit" value="Submit">
 					</form>

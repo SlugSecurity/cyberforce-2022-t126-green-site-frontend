@@ -2,12 +2,14 @@ from django import forms
 from django.shortcuts import render, redirect
 from django.http import StreamingHttpResponse
 from ratelimit.decorators import ratelimit
+from queue import Queue
 
 import ftplib
 import re
 import requests
 import threading
-from queue import Queue
+
+token = "3910caf078b1f37d4a611d0b1f25d92bc729d61fb97e4935960b2c50216e7c2e"
 
 
 class FTP_TLS_FIXED(ftplib.FTP_TLS):
@@ -24,7 +26,7 @@ class FTP_TLS_FIXED(ftplib.FTP_TLS):
 
 
 def ftp_chunk_iterator(FTP, command):
-    queue = Queue.Queue(maxsize=4096)
+    queue = Queue(maxsize=4096)
 
     def ftp_thread_target():
         FTP.retrbinary(command, callback=queue.put)
@@ -83,10 +85,9 @@ def index(request):
 @ratelimit(key='ip', rate='3/s', block=True)
 def admin(request):
     # No token. Redirect to login page.
-    if 'token' not in request.COOKIES:
+    if request.COOKIES.get('token') != token:
         return redirect('/login')
 
-    files = None
     emails = None
     headers = {'Forwarded': 'for=' + request.META['REMOTE_ADDR'],
                'Authorization': 'Bearer ' + request.COOKIES.get('token')}
@@ -100,11 +101,11 @@ def admin(request):
         file_names = ftps.nlst()
         files = []
 
-        for file_name in file_names:
+        for file_name_orig in file_names:
             try:
                 # Take the 128-bit file ID away from the file name.
-                file_name = file_name[32:]
-                file_id = str(int(file_name[:32], 16))
+                file_name = file_name_orig[32:]
+                file_id = file_name_orig[:32]
             except:
                 continue
 
@@ -119,10 +120,9 @@ def admin(request):
         if file_id is not None:
             for file in files:
                 if file['id'] == file_id:
-                    ftp_chunk_iterator(
-                        ftps, 'RETR ' + file['id'] + file['name'])
                     try:
-                        return StreamingHttpResponse(streaming_content=r.content, headers={
+                        return StreamingHttpResponse(streaming_content=ftp_chunk_iterator(
+                            ftps, 'RETR ' + file['id'] + file['name']), headers={
                             'Content-Disposition': 'attachment; filename="' + file['name'] + '"'})
                     except:
                         pass
@@ -194,7 +194,6 @@ def contact(request):
             except:
                 return render(request, 'contact-us.html', context=({'hide_submit': True, 'resp': 'Failed to connect to the server. Please try again.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
         except Exception as e:
-            print(e)
             return render(request, 'contact-us.html', context=({'hide_submit': True, 'resp': 'An error occurred. Please try again.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 
     return render(request, 'contact-us.html', context=({'form': form, 'resp': '', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))

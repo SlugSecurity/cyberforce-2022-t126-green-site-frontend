@@ -52,8 +52,11 @@ class ContactForm(forms.Form):
 
 
 def getStatusText(request):
-    if request.COOKIES.get('token') == None:
+    if request.COOKIES.get('user') == None:
         return 'Login'
+    
+    if request.COOKIES.get('token') == None:
+        return 'Logout'
     else:
         return 'Admin'
 
@@ -111,7 +114,7 @@ def admin(request):
             files.append({'name': file_name, 'id': file_id})
     except:
         ftps.close()
-        return render(request, 'admin.html', context={'userStateHref': getStatusText(request).lower, 'userStateText': getStatusText(request)})
+        return render(request, 'admin.html', context={'userStateHref': 'logout', 'userStateText': 'Logout'})
 
     if request.method == 'POST':
         file_id = request.POST.get('file')
@@ -134,14 +137,14 @@ def admin(request):
     try:
         r = requests.get('http://127.0.0.1:8080/api/emails', headers=headers)
     except:
-        return render(request, 'admin.html', context={'userStateHref': getStatusText(request).lower, 'userStateText': getStatusText(request)})
+        return render(request, 'admin.html', context={'userStateHref': 'logout', 'userStateText': 'Logout'})
 
     if r.status_code == 200:
         emails = r.json()
 
     return render(request, 'admin.html', context={
-        'userStateHref': getStatusText(request).lower,
-        'userStateText': getStatusText(request),
+        'userStateHref': 'logout', 
+        'userStateText': 'Logout',
         'files': files,
         'emails': emails
     })
@@ -232,6 +235,7 @@ def login(request):
 
         if r.status_code == 200:
             response = redirect('/')
+            response.set_cookie('user', username)
             token = r.json().get('token')
 
             if token is not None:
@@ -242,3 +246,10 @@ def login(request):
         return render(request, 'login.html', context=({'resp': 'Login Failed. Please try again.', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
 
     return render(request, 'login.html', context=({'resp': '', 'userStateHref': getStatusText(request).lower(), 'userStateText': getStatusText(request)}))
+
+@ratelimit(key='ip', rate='3/s', block=True)
+def logout(request):
+	response = redirect('/')
+	response.delete_cookie('user')
+	response.delete_cookie('token')
+	return response

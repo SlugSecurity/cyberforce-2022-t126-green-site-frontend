@@ -24,4 +24,5 @@ urlpatterns = [
     path('solar-generation', views.solar),
     path('manufacturing', views.manufacturing),
     path('login', views.login),
+    path('logout', views.logout),
 ]

@@ -1,6 +1,6 @@
 # Green Site Frontend
 
-This repository contains the Green Site Frontend created by UCSC's Cyber Slugs (Team 126) for the Department of Energy's 2022 CyberForce Competition.
+This repository contains the Green Team site frontend created by UCSC's Cyber Slugs (Team 126) for the Department of Energy's 2022 CyberForce Competition.
 
 Team Members: Jeffrey Zhang, Brian Mak, Steven Mak, Jackson Kohls, Nancy Lau
 
